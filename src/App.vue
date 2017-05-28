@@ -1,21 +1,6 @@
 <template>
   <div id="app">
-    <section class="section">
-  	      <h4>
-              Vue adoptation of Ettric's
-              <a href="//codepen.io/ettrics/pen/QbPEeg">Codepen</a>
-          </h4>
-    </section>
-    <Kanban :stages="statuses" :blocks="blocks" @update-block="updateBlock">
-        <div v-for="item in blocks" :slot="item.id">
-            <div>
-                <strong>id:</strong> {{ item.id }}
-            </div>
-            <div>
-                {{ item.title }}
-            </div>
-        </div>
-    </Kanban>
+    <Kanban ></Kanban>
   </div>
 </template>
 
@@ -28,38 +13,20 @@ export default {
   components: {
     Kanban,
   },
-  data() {
-    return {
-      statuses: ['on-hold', 'in-progress', 'needs-review', 'approved'],
-      blocks: [],
-    };
-  },
   mounted() {
     for (let i = 0; i <= 10; i += 1) {
-      this.blocks.push({
+      this.$store.state.blocks.push({
         id: i,
-        status: this.statuses[Math.floor(Math.random() * 4)],
+        status: this.$store.state.stages[Math.floor(Math.random() * 4)],
         title: faker.company.bs(),
       });
     }
-  },
-
-  methods: {
-    updateBlock(id, status) {
-      this.blocks.find(b => b.id === Number(id)).status = status;
-    },
   },
 };
 </script>
 
 <style lang="scss">
     @import './assets/kanban.scss';
-
-    $on-hold: #FB7D44;
-    $in-progress: #2A92BF;
-    $needs-review: #F4CE46;
-    $approved: #00B961;
-
     * {
     	box-sizing: border-box;
     }
@@ -71,40 +38,6 @@ export default {
     	font-weight: 300;
     	line-height: 1.5;
     	-webkit-font-smoothing: antialiased;
-    }
-
-    .drag-column {
-        &-on-hold {
-            .drag-column-header,
-            .is-moved,
-            .drag-options {
-                background: $on-hold;
-            }
-        }
-
-        &-in-progress {
-            .drag-column-header,
-            .is-moved,
-            .drag-options {
-                background: $in-progress;
-            }
-        }
-
-        &-needs-review {
-            .drag-column-header,
-            .is-moved,
-            .drag-options{
-                background: $needs-review;
-            }
-        }
-
-        &-approved {
-            .drag-column-header,
-            .is-moved,
-            .drag-options {
-                background: $approved;
-            }
-        }
     }
 
     .section {

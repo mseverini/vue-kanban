@@ -1,41 +1,38 @@
 <template>
     <div class="drag-container">
     	<ul class="drag-list">
-    		<li v-for="stage in stages" class="drag-column" :class="{['drag-column-' + stage]: true}">
-    			<span class="drag-column-header">
-    				<h2>{{ stage }}</h2>
+    		<li v-for="stage in statuses" class="drag-column" >
+    			<span class="drag-column-header" :style="'background-color:'+stage.color+';'">
+    				<h2>{{ stage.title }}</h2>
     			</span>
-    			<div class="drag-options"></div>
-    			<ul class="drag-inner-list" ref="list" :data-status="stage">
-                    <li class="drag-item" v-for="block in getBlocks(stage)" :data-block-id="block.id" :key="block.id">
+    			<div class = 'drag-options'></div>
+    			<ul class="drag-inner-list" ref="list" >
+                    <li class="drag-item" v-for="block in getBlocks(stage)" >
                         <slot :name="block.id">
-                            <strong>{{ block.status }}</strong>
-                            <div>{{ block.id }}</div>
+                            <strong>{{ block.title }}</strong>
                         </slot>
                     </li>
     			</ul>
     		</li>
     	</ul>
     </div>
+
 </template>
 
 <script>
     import dragula from 'dragula';
+    //import { mapGetters, mapActions } from 'vuex'
 
     export default {
       name: 'KanbanBoard',
-
-      props: {
-        stages: {},
-        blocks: {},
-      },
-
-      computed: {
-        localBlocks() {
-          return this.blocks;
+      computed:{
+        statuses(){
+           return this.$store.state.stages
         },
+        localBlocks(){
+          return this.$store.state.blocks
+        }
       },
-
       methods: {
         getBlocks(status) {
           return this.localBlocks.filter(block => block.status === status);
@@ -48,7 +45,7 @@
               el.classList.add('is-moving');
             })
             .on('drop', (block, list) => {
-              this.$emit('update-block', block.dataset.blockId, list.dataset.status);
+              this.$store.dispatch('updateBlock',{block: block,staus: list})
             })
             .on('dragend', (el) => {
               el.classList.remove('is-moving');
